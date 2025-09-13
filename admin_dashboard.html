@@ -5,54 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Simple clean styling */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .form-section input {
+            padding: 10px;
+            font-size: 16px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        .form-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+        }
+        .form-section button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: #fff;
+        }
+        .remove-btn {
+            padding: 5px 10px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background: #a71d2a;
+        }
+        p.logout {
+            text-align: center;
+            margin-top: 20px;
+        }
+        p.logout a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        p.logout a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="dashboard-card">
-            <h1>Admin Dashboard</h1>
+        <h1>Admin Dashboard</h1>
 
-            <div class="form-section">
-                <input type="text" id="bookName" placeholder="Book Name">
-                <button class="add-btn" onclick="addBook()">Add Book</button>
-            </div>
-
-            <h3>Books List</h3>
-            <table id="booksTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Book Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <!-- Add Book Section -->
+        <div class="form-section">
+            <input type="text" id="bookName" placeholder="Book Name">
+            <button onclick="addBook()">Add Book</button>
         </div>
+
+        <!-- Books Table -->
+        <h3>Books List</h3>
+        <p>Total Books: <span id="bookCount">0</span></p>
+        <table id="booksTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Book Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <p class="logout"><a href="index.html">Logout</a></p>
     </div>
 
     <script>
+        // Initialize books from localStorage
         let books = JSON.parse(localStorage.getItem("books")) || [];
         let bookId = books.length ? Math.max(...books.map(b => b.id)) + 1 : 1;
 
+        // Add a new book
         function addBook() {
-            const bookName = document.getElementById("bookName").value.trim();
-            if(!bookName) return alert("Enter a book name");
+            const bookNameInput = document.getElementById("bookName");
+            const bookName = bookNameInput.value.trim();
+
+            if(!bookName) return alert("Please enter a book name");
 
             books.push({id: bookId++, name: bookName});
             localStorage.setItem("books", JSON.stringify(books));
-            document.getElementById("bookName").value = "";
+
+            bookNameInput.value = "";
             renderBooks();
         }
 
+        // Remove a book by ID
         function removeBook(id) {
             books = books.filter(book => book.id !== id);
             localStorage.setItem("books", JSON.stringify(books));
             renderBooks();
         }
 
+        // Render books table
         function renderBooks() {
-            const tbody = document.getElementById("booksTable").querySelector("tbody");
+            const tbody = document.querySelector("#booksTable tbody");
             tbody.innerHTML = "";
+
             books.forEach(book => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
@@ -62,8 +154,11 @@
                 `;
                 tbody.appendChild(row);
             });
+
+            document.getElementById("bookCount").textContent = books.length;
         }
 
+        // Initial render
         renderBooks();
     </script>
 </body>
