@@ -3,93 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .form-section input {
+            padding: 10px;
+            font-size: 16px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        .form-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+        }
+        .form-section button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .remove-btn {
+            padding: 5px 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background-color: #a71d2a;
+        }
+        p.logout {
+            text-align: center;
+            margin-top: 20px;
+        }
+        p.logout a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        p.logout a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="dashboard-card">
-            <h1>Student Dashboard</h1>
+        <h1>Admin Dashboard</h1>
 
-            <h3>Available Books</h3>
-            <table id="booksTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Book Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <h3>Issued Books</h3>
-            <table id="issuedTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Book Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <!-- Add Book Section -->
+        <div class="form-section">
+            <input type="text" id="bookName" placeholder="Enter Book Name">
+            <button onclick="addBook()">Add Book</button>
         </div>
+
+        <!-- Books Table -->
+        <h3>Books List</h3>
+        <p>Total Books: <span id="bookCount">0</span></p>
+        <table id="booksTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Book Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <p class="logout"><a href="index.html">Logout</a></p>
     </div>
 
     <script>
+        // Load books from localStorage
         let books = JSON.parse(localStorage.getItem("books")) || [];
-        let issuedBooks = JSON.parse(localStorage.getItem("issuedBooks")) || [];
+        let bookId = books.length ? Math.max(...books.map(b => b.id)) + 1 : 1;
 
+        // Add a new book
+        function addBook() {
+            const input = document.getElementById("bookName");
+            const name = input.value.trim();
+            if(!name) return alert("Please enter a book name.");
+
+            books.push({id: bookId++, name: name});
+            localStorage.setItem("books", JSON.stringify(books));
+
+            input.value = "";
+            renderBooks();
+        }
+
+        // Remove a book by ID
+        function removeBook(id) {
+            books = books.filter(book => book.id !== id);
+            localStorage.setItem("books", JSON.stringify(books));
+            renderBooks();
+        }
+
+        // Render books table
         function renderBooks() {
-            const tbody = document.getElementById("booksTable").querySelector("tbody");
+            const tbody = document.querySelector("#booksTable tbody");
             tbody.innerHTML = "";
             books.forEach(book => {
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${book.id}</td><td>${book.name}</td><td><button class="issue-btn" onclick="issueBook(${book.id})">Issue</button></td>`;
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.name}</td>
+                    <td><button class="remove-btn" onclick="removeBook(${book.id})">Remove</button></td>
+                `;
                 tbody.appendChild(row);
             });
+
+            // Update total book count
+            document.getElementById("bookCount").textContent = books.length;
         }
 
-        function renderIssuedBooks() {
-            const tbody = document.getElementById("issuedTable").querySelector("tbody");
-            tbody.innerHTML = "";
-            issuedBooks.forEach(book => {
-                const row = document.createElement("tr");
-                row.innerHTML = `<td>${book.id}</td><td>${book.name}</td><td><button class="return-btn" onclick="returnBook(${book.id})">Return</button></td>`;
-                tbody.appendChild(row);
-            });
-        }
-
-        function issueBook(id) {
-            const index = books.findIndex(b => b.id === id);
-            if(index !== -1) {
-                issuedBooks.push(books[index]);
-                books.splice(index, 1);
-                saveData();
-                renderBooks();
-                renderIssuedBooks();
-            }
-        }
-
-        function returnBook(id) {
-            const index = issuedBooks.findIndex(b => b.id === id);
-            if(index !== -1) {
-                books.push(issuedBooks[index]);
-                issuedBooks.splice(index, 1);
-                saveData();
-                renderBooks();
-                renderIssuedBooks();
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem("books", JSON.stringify(books));
-            localStorage.setItem("issuedBooks", JSON.stringify(issuedBooks));
-        }
-
+        // Initial render
         renderBooks();
-        renderIssuedBooks();
     </script>
 </body>
 </html>
