@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-card">
+            <h1>Student Dashboard</h1>
+
+            <h3>Available Books</h3>
+            <table id="booksTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h3>Issued Books</h3>
+            <table id="issuedTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let books = JSON.parse(localStorage.getItem("books")) || [];
+        let issuedBooks = JSON.parse(localStorage.getItem("issuedBooks")) || [];
+
+        function renderBooks() {
+            const tbody = document.getElementById("booksTable").querySelector("tbody");
+            tbody.innerHTML = "";
+            books.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${book.id}</td><td>${book.name}</td><td><button class="issue-btn" onclick="issueBook(${book.id})">Issue</button></td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderIssuedBooks() {
+            const tbody = document.getElementById("issuedTable").querySelector("tbody");
+            tbody.innerHTML = "";
+            issuedBooks.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${book.id}</td><td>${book.name}</td><td><button class="return-btn" onclick="returnBook(${book.id})">Return</button></td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function issueBook(id) {
+            const index = books.findIndex(b => b.id === id);
+            if(index !== -1) {
+                issuedBooks.push(books[index]);
+                books.splice(index, 1);
+                saveData();
+                renderBooks();
+                renderIssuedBooks();
+            }
+        }
+
+        function returnBook(id) {
+            const index = issuedBooks.findIndex(b => b.id === id);
+            if(index !== -1) {
+                books.push(issuedBooks[index]);
+                issuedBooks.splice(index, 1);
+                saveData();
+                renderBooks();
+                renderIssuedBooks();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem("books", JSON.stringify(books));
+            localStorage.setItem("issuedBooks", JSON.stringify(issuedBooks));
+        }
+
+        renderBooks();
+        renderIssuedBooks();
+    </script>
+</body>
+</html>

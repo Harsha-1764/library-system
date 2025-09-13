@@ -1,0 +1,101 @@
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+/* Body */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    padding: 20px;
+}
+
+/* Container & Card */
+.container { width: 100%; display: flex; justify-content: center; align-items: center; }
+.card, .dashboard-card {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 350px;
+    max-width: 100%;
+    text-align: center;
+}
+
+/* Headings */
+.card h1, .dashboard-card h1 { margin-bottom: 20px; color: #333; }
+.card p { margin-bottom: 30px; color: #666; }
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.student-btn { background: #4CAF50; color: white; }
+.student-btn:hover { background: #45a049; }
+
+.admin-btn { background: #2196F3; color: white; }
+.admin-btn:hover { background: #1e88e5; }
+
+.login-btn { background: #FF5722; color: white; }
+.login-btn:hover { background: #e64a19; }
+
+.add-btn { background: #4CAF50; color: white; }
+.add-btn:hover { background: #45a049; }
+
+.remove-btn { background: #f44336; color: white; }
+.remove-btn:hover { background: #d32f2f; }
+
+.issue-btn { background: #03A9F4; color: white; }
+.issue-btn:hover { background: #0288d1; }
+
+.return-btn { background: #FF9800; color: white; }
+.return-btn:hover { background: #f57c00; }
+
+/* Input fields */
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+th { background-color: #f2f2f2; }
+
+/* Form section (admin dashboard) */
+.form-section { display: flex; gap: 10px; margin-bottom: 20px; }
+.form-section input { flex: 1; }
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .card, .dashboard-card {
+        padding: 30px 20px;
+        width: 100%;
+    }
+
+    table th, table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .form-section {
+        flex-direction: column;
+    }
+
+    .form-section input, .form-section button {
+        width: 100%;
+    }
+}
